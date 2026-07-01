@@ -1,0 +1,123 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f4f6f8;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 950px;
+  margin: 0 auto;
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #1a1a1a;
+}
+
+.calculator {
+  display: flex;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.inputs {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+.input-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.input-label label {
+  font-size: 15px;
+  color: #333;
+}
+
+.input-label input[type="number"] {
+  width: 110px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 15px;
+  text-align: right;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #1a4fa3;
+}
+
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #777;
+}
+
+.results {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result-top {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.result-row {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.result-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.result-value {
+  font-size: 30px;
+  font-weight: bold;
+  color: #1a4fa3;
+}
+
+.result-value.small {
+  font-size: 20px;
+  color: #1a1a1a;
+}
+
+.pie-chart {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  margin-top: 20px;
+  background: conic-gradient(#1a4fa3 0deg, #1a4fa3 0deg, #a9c2e8 0deg);
+}
+
+@media (max-width: 700px) {
+  .calculator {
+    flex-direction: column;
+  }
+}
