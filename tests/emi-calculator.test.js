@@ -44,3 +44,28 @@ test('rejects negative and excessive interest rates', () => {
     { name: 'RangeError' }
   );
 });
+
+test('accepts supported boundary values and numeric input strings', () => {
+  const minimum = calculateEMI({ principal: '100000', years: '1', annualRate: '0' });
+  const maximum = calculateEMI({ principal: 100000000, years: 30, annualRate: 15 });
+  assert.equal(minimum.principal, 100000);
+  assert.equal(minimum.months, 12);
+  assert.equal(maximum.principal, 100000000);
+  assert.equal(maximum.months, 360);
+  assert.ok(Number.isFinite(maximum.emi));
+});
+
+test('rejects non-finite and missing numeric inputs', () => {
+  assert.throws(
+    () => calculateEMI({ principal: '', years: 10, annualRate: 8 }),
+    { name: 'RangeError' }
+  );
+  assert.throws(
+    () => calculateEMI({ principal: 100000, years: 10, annualRate: 'NaN' }),
+    { name: 'RangeError' }
+  );
+  assert.throws(
+    () => calculateEMI({ principal: 100000, years: 10, annualRate: 16 }),
+    { name: 'RangeError' }
+  );
+});
