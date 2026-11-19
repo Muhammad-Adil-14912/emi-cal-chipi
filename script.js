@@ -10,51 +10,46 @@ const principalValue = document.getElementById("principalValue");
 const interestValue = document.getElementById("interestValue");
 const totalValue = document.getElementById("totalValue");
 const pieChart = document.getElementById("pieChart");
+const calculationError = document.getElementById("calculationError");
 
 function formatMoney(num) {
   return "₹" + Math.round(num).toLocaleString("en-IN");
 }
 
+function clearResults() {
+  emiValue.textContent = "—";
+  principalValue.textContent = "—";
+  interestValue.textContent = "—";
+  totalValue.textContent = "—";
+  pieChart.style.background = "none";
+  pieChart.setAttribute("aria-label", "No calculation available");
+}
+
 function calculateEMI() {
-  const principal = Number(amountBox.value);
-  const years = Number(tenureBox.value);
-  const annualRate = Number(rateBox.value);
-  const months = years * 12;
+  try {
+    const result = window.EMICalculator.calculateEMI({
+      principal: amountBox.value,
+      years: tenureBox.value,
+      annualRate: rateBox.value,
+    });
 
-  if (
-    !Number.isFinite(principal) ||
-    !Number.isFinite(years) ||
-    !Number.isFinite(annualRate) ||
-    principal <= 0 ||
-    years <= 0 ||
-    annualRate < 0 ||
-    months <= 0
-  ) {
-    emiValue.textContent = "—";
-    principalValue.textContent = "—";
-    interestValue.textContent = "—";
-    totalValue.textContent = "—";
-    pieChart.style.background = "none";
-    return;
+    calculationError.textContent = "";
+    emiValue.textContent = formatMoney(result.emi);
+    principalValue.textContent = formatMoney(result.principal);
+    interestValue.textContent = formatMoney(result.interest);
+    totalValue.textContent = formatMoney(result.total);
+    pieChart.style.background =
+      "conic-gradient(#1a4fa3 0deg " + result.principalShareDegrees +
+      "deg, #a9c2e8 " + result.principalShareDegrees + "deg 360deg)";
+    pieChart.setAttribute(
+      "aria-label",
+      "Principal " + formatMoney(result.principal) +
+      "; interest " + formatMoney(result.interest)
+    );
+  } catch (error) {
+    clearResults();
+    calculationError.textContent = error.message;
   }
-
-  const monthlyRate = annualRate / 12 / 100;
-  // The standard EMI expression divides by zero when the interest rate is 0%.
-  const emi = monthlyRate === 0
-    ? principal / months
-    : (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
-      (Math.pow(1 + monthlyRate, months) - 1);
-
-  const totalAmount = emi * months;
-  const totalInterest = Math.max(0, totalAmount - principal);
-  const principalShare = (principal / totalAmount) * 360;
-
-  emiValue.textContent = formatMoney(emi);
-  principalValue.textContent = formatMoney(principal);
-  interestValue.textContent = formatMoney(totalInterest);
-  totalValue.textContent = formatMoney(totalAmount);
-  pieChart.style.background =
-    "conic-gradient(#1a4fa3 0deg " + principalShare + "deg, #a9c2e8 " + principalShare + "deg 360deg)";
 }
 
 function syncAndCalculate(box, slider) {
@@ -62,6 +57,7 @@ function syncAndCalculate(box, slider) {
     slider.value = box.value;
     calculateEMI();
   });
+
   slider.addEventListener("input", function () {
     box.value = slider.value;
     calculateEMI();
