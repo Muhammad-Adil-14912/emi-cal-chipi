@@ -19,23 +19,40 @@ function calculateEMI() {
   const principal = Number(amountBox.value);
   const years = Number(tenureBox.value);
   const annualRate = Number(rateBox.value);
-
-  const monthlyRate = annualRate / 12 / 100;
   const months = years * 12;
 
-  const emi =
-    (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
-    (Math.pow(1 + monthlyRate, months) - 1);
+  if (
+    !Number.isFinite(principal) ||
+    !Number.isFinite(years) ||
+    !Number.isFinite(annualRate) ||
+    principal <= 0 ||
+    years <= 0 ||
+    annualRate < 0 ||
+    months <= 0
+  ) {
+    emiValue.textContent = "—";
+    principalValue.textContent = "—";
+    interestValue.textContent = "—";
+    totalValue.textContent = "—";
+    pieChart.style.background = "none";
+    return;
+  }
+
+  const monthlyRate = annualRate / 12 / 100;
+  // The standard EMI expression divides by zero when the interest rate is 0%.
+  const emi = monthlyRate === 0
+    ? principal / months
+    : (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
+      (Math.pow(1 + monthlyRate, months) - 1);
 
   const totalAmount = emi * months;
-  const totalInterest = totalAmount - principal;
+  const totalInterest = Math.max(0, totalAmount - principal);
+  const principalShare = (principal / totalAmount) * 360;
 
   emiValue.textContent = formatMoney(emi);
   principalValue.textContent = formatMoney(principal);
   interestValue.textContent = formatMoney(totalInterest);
   totalValue.textContent = formatMoney(totalAmount);
-
-  const principalShare = (principal / totalAmount) * 360;
   pieChart.style.background =
     "conic-gradient(#1a4fa3 0deg " + principalShare + "deg, #a9c2e8 " + principalShare + "deg 360deg)";
 }
