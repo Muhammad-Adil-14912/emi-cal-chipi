@@ -1,0 +1,19 @@
+name: Calculator quality checks
+
+on:
+  push:
+    branches: [main, audit/2026-11-quality-improvements]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run EMI calculation tests
+        run: node --test
+      - name: Check browser script syntax
+        run: node --check script.js
